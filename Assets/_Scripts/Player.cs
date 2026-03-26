@@ -9,6 +9,8 @@ public class Player : MonoBehaviour
     [SerializeField] private float moveSpeed = 5f;
     [SerializeField] private float rotateSpeed = 2f;
 
+    [SerializeField] private GameInput gameInput;
+
     private bool isWalking = false;
 
 
@@ -16,27 +18,8 @@ public class Player : MonoBehaviour
     private void Update()
     {
         Vector2 inputVector = new Vector2(0, 0);
-        inputVector = inputVector.normalized;
+        inputVector = gameInput.GetMovementVector();
 
-        if (Input.GetKey(KeyCode.W))
-        {
-            inputVector.y = inputVector.y + 1f;
-        }
-
-        if (Input.GetKey(KeyCode.A))
-        {
-            inputVector.x = inputVector.x - 1f;
-        }
-
-        if (Input.GetKey(KeyCode.S))
-        {
-            inputVector.y = inputVector.y - 1f;
-        }
-
-        if (Input.GetKey(KeyCode.D))
-        {
-            inputVector.x = inputVector.x + 1f;
-        }
         Vector3 moveDir = new Vector3(inputVector.x, 0f, inputVector.y);
         moveDir = moveDir.normalized;
 
