@@ -17,6 +17,19 @@ public class Player : MonoBehaviour
 
     private void Update()
     {
+        HandleMovement();
+        HandleInteractions();
+    }
+
+
+    public bool IsWalking()
+    {
+        return isWalking;
+    }
+
+
+    private void HandleMovement()
+    {
         Vector2 inputVector = new Vector2(0, 0);
         inputVector = gameInput.GetMovementVector();
 
@@ -35,7 +48,7 @@ public class Player : MonoBehaviour
         if (!canMove)
         {
             // Attemp moving only on X-axis
-            Vector3 moveDirX = new Vector3(moveDir.x, 0f, 0f);
+            Vector3 moveDirX = new Vector3(moveDir.x, 0f, 0f).normalized;
             canMove = !Physics.CapsuleCast(transform.position, transform.position + new Vector3(0f, playerHeight, 0f), playerRadius, moveDirX, moveDistance);
 
             if (canMove)
@@ -47,7 +60,7 @@ public class Player : MonoBehaviour
             {
                 // Cannot move on the X-axis, Let's try to move in Z-axis
 
-                Vector3 moveDirZ = new Vector3(0f, 0f, moveDir.z); ;
+                Vector3 moveDirZ = new Vector3(0f, 0f, moveDir.z).normalized;
                 canMove = !Physics.CapsuleCast(transform.position, transform.position + new Vector3(0f, playerHeight, 0f), playerRadius, moveDirZ, moveDistance);
 
                 if (canMove)
@@ -64,19 +77,25 @@ public class Player : MonoBehaviour
 
         }
 
-
         if (canMove)
         {
             gameObject.transform.position = transform.position + moveDir * moveDistance;
         }
 
-
         gameObject.transform.forward = Vector3.Slerp(transform.forward, moveDir, Time.deltaTime * rotateSpeed);
     }
 
-    public bool IsWalking()
+    private void HandleInteractions()
     {
-        return isWalking;
+        Vector2 inputVector = gameInput.GetMovementVector();
+        Vector3 moveDir = new Vector3(inputVector.x, 0, inputVector.y);
+
+        float interactionDistance = 2f;
+        RaycastHit raycastHit;
+        if (Physics.Raycast(transform.position, moveDir, out raycastHit, interactionDistance))
+        {
+            Debug.Log(raycastHit.transform.name);
+        }
     }
 
 }
