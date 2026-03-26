@@ -25,8 +25,8 @@ public class Player : MonoBehaviour
 
         isWalking = moveDir.magnitude > 0;
 
-        transform.forward = Vector3.Slerp(transform.forward, moveDir, Time.deltaTime * rotateSpeed);
-        transform.position = transform.position + moveDir * moveSpeed * Time.deltaTime;
+        gameObject.transform.forward = Vector3.Slerp(transform.forward, moveDir, Time.deltaTime * rotateSpeed);
+        gameObject.transform.position = transform.position + moveDir * moveSpeed * Time.deltaTime;
     }
 
     public bool IsWalking()
