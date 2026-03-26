@@ -25,8 +25,16 @@ public class Player : MonoBehaviour
 
         isWalking = moveDir.magnitude > 0;
 
+        float moveDistance = moveSpeed * Time.deltaTime;
+        float playerRadius = 0.6f;
+        float playerHeight = 2f;
+        bool canMove = !Physics.CapsuleCast(transform.position, transform.position + Vector3.up * playerHeight, playerRadius, moveDir, moveDistance);
+
+        if (canMove)
+        {
+            gameObject.transform.position = transform.position + moveDir * moveDistance;
+        }
         gameObject.transform.forward = Vector3.Slerp(transform.forward, moveDir, Time.deltaTime * rotateSpeed);
-        gameObject.transform.position = transform.position + moveDir * moveSpeed * Time.deltaTime;
     }
 
     public bool IsWalking()
