@@ -10,8 +10,10 @@ public class Player : MonoBehaviour
     [SerializeField] private float rotateSpeed = 2f;
 
     [SerializeField] private GameInput gameInput;
+    [SerializeField] private LayerMask countersLayerMask;
 
     private bool isWalking = false;
+    private Vector3 lastInteractionDirection;
 
 
 
@@ -90,11 +92,20 @@ public class Player : MonoBehaviour
         Vector2 inputVector = gameInput.GetMovementVector();
         Vector3 moveDir = new Vector3(inputVector.x, 0, inputVector.y);
 
+        if (moveDir != Vector3.zero)
+        {
+            lastInteractionDirection = moveDir;
+        }
+
         float interactionDistance = 2f;
         RaycastHit raycastHit;
-        if (Physics.Raycast(transform.position, moveDir, out raycastHit, interactionDistance))
+
+        if (Physics.Raycast(transform.position, lastInteractionDirection, out raycastHit, interactionDistance, countersLayerMask))
         {
-            Debug.Log(raycastHit.transform.name);
+            if (raycastHit.transform.TryGetComponent(out ClearCounter clearCounter))
+            {
+                clearCounter.Interact();
+            }
         }
     }
 

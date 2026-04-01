@@ -903,6 +903,9 @@ MonoBehaviour:
   moveSpeed: 5
   rotateSpeed: 11
   gameInput: {fileID: 1080336633}
+  countersLayerMask:
+    serializedVersion: 2
+    m_Bits: 64
 --- !u!1 &1640513999
 GameObject:
   m_ObjectHideFlags: 0
