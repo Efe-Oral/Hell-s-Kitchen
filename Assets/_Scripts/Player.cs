@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -5,6 +6,14 @@ using UnityEngine.Timeline;
 
 public class Player : MonoBehaviour
 {
+
+
+
+    public event EventHandler<OnSelectedCounterChangedEventArgs> OnSelectedCounterChanged;
+    public class OnSelectedCounterChangedEventArgs : EventArgs
+    {
+        public ClearCounter selectedCounter;
+    }
 
     [SerializeField] private float moveSpeed = 5f;
     [SerializeField] private float rotateSpeed = 2f;
@@ -14,8 +23,12 @@ public class Player : MonoBehaviour
 
     private bool isWalking = false;
     private Vector3 lastInteractionDirection;
+    private ClearCounter selectedCounter;
 
-
+    private void Start()
+    {
+        gameInput.OnInteractAction += GameInput_OnInteraction;
+    }
 
     private void Update()
     {
@@ -104,10 +117,48 @@ public class Player : MonoBehaviour
         {
             if (raycastHit.transform.TryGetComponent(out ClearCounter clearCounter))
             {
-                clearCounter.Interact();
+                if (clearCounter != selectedCounter)
+                {
+                    SetSelectedCounter(clearCounter);
+
+
+                }
+
+                else
+                {
+                    SetSelectedCounter(null);
+                }
+
             }
+            else
+            {
+                SetSelectedCounter(null);
+            }
+
         }
     }
+
+    private void GameInput_OnInteraction(object sender, EventArgs e)
+    {
+        if (selectedCounter != null)
+        {
+            selectedCounter.Interact();
+        }
+    }
+
+    private void SetSelectedCounter(ClearCounter selectedCounter)
+    {
+        this.selectedCounter = selectedCounter;
+
+        if (OnSelectedCounterChanged != null)
+        {
+            OnSelectedCounterChanged.Invoke(this, new OnSelectedCounterChangedEventArgs
+            {
+                selectedCounter = selectedCounter
+            });
+        }
+    }
+
 
 }
 
