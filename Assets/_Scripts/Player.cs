@@ -8,7 +8,7 @@ using UnityEngine.Timeline;
 public class Player : MonoBehaviour
 {
 
-    public static Player Instance { get; private set; }
+    public static Player Instance { get; private set; } // other scripts read data from Player.cs but only player class can write internal data
 
     public event Action<ClearCounter> OnSelectedCounterChanged;
 
