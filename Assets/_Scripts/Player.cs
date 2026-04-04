@@ -20,14 +20,14 @@ public class Player : MonoBehaviour
 
     private bool isWalking = false;
     private Vector3 lastInteractionDirection;
-    private ClearCounter selectedCounter;
+    private ClearCounter selectedCounter; // currently selected counter
 
 
     private void Awake()
     {
         if (Instance != null)
         {
-            Debug.LogError("There is more than one instance!");
+            Debug.LogError("There is more than one Player script instance!");
         }
 
         Instance = this;
@@ -127,17 +127,20 @@ public class Player : MonoBehaviour
             {
                 if (clearCounter != selectedCounter)
                 {
-                    SetSelectedCounter(clearCounter);
-                }
-                else
-                {
-                    SetSelectedCounter(null);
+                    SetSelectedCounter(clearCounter); // this triggers the set counter event for the new clearCounter instance!
                 }
             }
             else
             {
                 SetSelectedCounter(null);
             }
+
+
+        }
+
+        else
+        {
+            SetSelectedCounter(null);
         }
     }
 
@@ -149,13 +152,13 @@ public class Player : MonoBehaviour
         }
     }
 
-    private void SetSelectedCounter(ClearCounter counter)
+    private void SetSelectedCounter(ClearCounter newCounter)
     {
-        selectedCounter = counter;
+        selectedCounter = newCounter; // newCounter is the incoming counter from the raycast
 
         if (OnSelectedCounterChanged != null) // shoter version OnSelectedCounterChanged?.Invoke(counter);
         {
-            OnSelectedCounterChanged.Invoke(counter);
+            OnSelectedCounterChanged.Invoke(newCounter);
         }
     }
 
