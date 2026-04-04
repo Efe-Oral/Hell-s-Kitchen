@@ -1,19 +1,16 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Timeline;
 
 public class Player : MonoBehaviour
 {
 
+    public static Player Instance { get; private set; }
 
-
-    public event EventHandler<OnSelectedCounterChangedEventArgs> OnSelectedCounterChanged;
-    public class OnSelectedCounterChangedEventArgs : EventArgs
-    {
-        public ClearCounter selectedCounter;
-    }
+    public event Action<ClearCounter> OnSelectedCounterChanged;
 
     [SerializeField] private float moveSpeed = 5f;
     [SerializeField] private float rotateSpeed = 2f;
@@ -24,6 +21,17 @@ public class Player : MonoBehaviour
     private bool isWalking = false;
     private Vector3 lastInteractionDirection;
     private ClearCounter selectedCounter;
+
+
+    private void Awake()
+    {
+        if (Instance != null)
+        {
+            Debug.LogError("There is more than one instance!");
+        }
+
+        Instance = this;
+    }
 
     private void Start()
     {
@@ -120,21 +128,16 @@ public class Player : MonoBehaviour
                 if (clearCounter != selectedCounter)
                 {
                     SetSelectedCounter(clearCounter);
-
-
                 }
-
                 else
                 {
                     SetSelectedCounter(null);
                 }
-
             }
             else
             {
                 SetSelectedCounter(null);
             }
-
         }
     }
 
@@ -146,16 +149,13 @@ public class Player : MonoBehaviour
         }
     }
 
-    private void SetSelectedCounter(ClearCounter selectedCounter)
+    private void SetSelectedCounter(ClearCounter counter)
     {
-        this.selectedCounter = selectedCounter;
+        selectedCounter = counter;
 
-        if (OnSelectedCounterChanged != null)
+        if (OnSelectedCounterChanged != null) // shoter version OnSelectedCounterChanged?.Invoke(counter);
         {
-            OnSelectedCounterChanged.Invoke(this, new OnSelectedCounterChangedEventArgs
-            {
-                selectedCounter = selectedCounter
-            });
+            OnSelectedCounterChanged.Invoke(counter);
         }
     }
 
