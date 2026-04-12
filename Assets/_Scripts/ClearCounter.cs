@@ -14,7 +14,7 @@ public class ClearCounter : MonoBehaviour
 
     private void Update()
     {
-        if (kitchenObject != null && Input.GetKeyDown(KeyCode.T))
+        if (kitchenObject != null && Input.GetKeyDown(KeyCode.T) && newParentCounter != null)
         {
             kitchenObject.SetClearCounter(newParentCounter);
 
@@ -54,7 +54,7 @@ public class ClearCounter : MonoBehaviour
 
     public void ClearKitchenObject()
     {
-        this.kitchenObject = null;
+        kitchenObject = null;
     }
 
     public bool HasKitchenObject()
