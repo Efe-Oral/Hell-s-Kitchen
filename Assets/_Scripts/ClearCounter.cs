@@ -43,4 +43,31 @@ public class ClearCounter : MonoBehaviour
     {
         return counterTopPoint;
     }
+
+
+    public void SetKitchenObject(KitchenObject kitchenObject)
+    {
+        this.kitchenObject = kitchenObject;
+    }
+
+    public KitchenObject GetKitchenObject()
+    {
+        return kitchenObject;
+    }
+
+    public void ClearKitchenObject()
+    {
+        this.kitchenObject = null;
+    }
+
+    public bool HasKitchenObject()
+    {
+        if (kitchenObject != null)
+        {
+            return true;
+        }
+
+        return false;
+    }
+
 }
