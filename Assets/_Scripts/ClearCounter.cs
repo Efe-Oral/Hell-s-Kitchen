@@ -7,8 +7,20 @@ public class ClearCounter : MonoBehaviour
     [SerializeField] private KitchenObjectsSO kitchenObjectsSO;
     [SerializeField] private Transform counterTopPoint;
 
+    [SerializeField] private ClearCounter newParentCounter;
+
     private KitchenObject kitchenObject;
 
+
+    private void Update()
+    {
+        if (kitchenObject != null && Input.GetKeyDown(KeyCode.T))
+        {
+            kitchenObject.SetClearCounter(newParentCounter);
+
+        }
+
+    }
 
     public void Interact()
     {
@@ -25,8 +37,10 @@ public class ClearCounter : MonoBehaviour
         { // if there is already an object on the counter, log on which counter the object is located
             Debug.Log(kitchenObject.GetClearCounter());
         }
+    }
 
-
-
+    public Transform GetKitchenObjectFollowTransfor()
+    {
+        return counterTopPoint;
     }
 }
