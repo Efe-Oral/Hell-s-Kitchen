@@ -1,11 +1,9 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Timeline;
 
-public class Player : MonoBehaviour
+public class Player : MonoBehaviour, IKitchenObjectParent
 {
 
     public static Player Instance { get; private set; } // other scripts read data from Player.cs but only player class can write internal data
@@ -14,6 +12,8 @@ public class Player : MonoBehaviour
 
     [SerializeField] private float moveSpeed = 5f;
     [SerializeField] private float rotateSpeed = 2f;
+    [SerializeField] private Transform kitchenObjectHoldPoint;
+    [SerializeField] private float kitchenObjectPickupLerpSpeed = 8f;
 
     [SerializeField] private GameInput gameInput;
     [SerializeField] private LayerMask countersLayerMask;
@@ -21,7 +21,10 @@ public class Player : MonoBehaviour
     private bool isWalking = false;
     private Vector3 lastInteractionDirection;
     private ClearCounter selectedCounter; // currently selected counter
-
+    private KitchenObject kitchenObject;
+    private Vector3 kitchenObjectPickupStartWorld;
+    private bool kitchenObjectPickupLerping;
+    private bool kitchenObjectPickupLerpResetPending;
 
     private void Awake()
     {
@@ -44,6 +47,30 @@ public class Player : MonoBehaviour
         HandleInteractions();
     }
 
+    private void LateUpdate()
+    {
+        if (!kitchenObjectPickupLerping || kitchenObject == null)
+        {
+            return;
+        }
+
+        if (kitchenObjectPickupLerpResetPending)
+        {
+            kitchenObject.transform.position = kitchenObjectPickupStartWorld;
+            kitchenObjectPickupLerpResetPending = false;
+        }
+
+        kitchenObject.transform.position = Vector3.Lerp(
+            kitchenObject.transform.position,
+            kitchenObjectHoldPoint.position,
+            Time.deltaTime * kitchenObjectPickupLerpSpeed);
+
+        if ((kitchenObject.transform.position - kitchenObjectHoldPoint.position).sqrMagnitude < 0.0004f)
+        {
+            kitchenObject.transform.localPosition = Vector3.zero;
+            kitchenObjectPickupLerping = false;
+        }
+    }
 
     public bool IsWalking()
     {
@@ -148,7 +175,7 @@ public class Player : MonoBehaviour
     {
         if (selectedCounter != null)
         {
-            selectedCounter.Interact();
+            selectedCounter.Interact(this);
         }
     }
 
@@ -163,6 +190,43 @@ public class Player : MonoBehaviour
     }
 
 
+
+
+    public Transform GetKitchenObjectFollowTransfor()
+    {
+        return kitchenObjectHoldPoint;
+    }
+
+    public void SetKitchenObject(KitchenObject kitchenObject)
+    {
+        this.kitchenObject = kitchenObject;
+
+        if (kitchenObject == null)
+        {
+            kitchenObjectPickupLerping = false;
+            return;
+        }
+
+        kitchenObjectPickupStartWorld = kitchenObject.transform.position;
+        kitchenObjectPickupLerpResetPending = true;
+        kitchenObjectPickupLerping = true;
+    }
+
+    public KitchenObject GetKitchenObject()
+    {
+        return kitchenObject;
+    }
+
+    public void ClearKitchenObject()
+    {
+        kitchenObjectPickupLerping = false;
+        kitchenObject = null;
+    }
+
+    public bool HasKitchenObject()
+    {
+        return kitchenObject != null;
+    }
 }
 
 

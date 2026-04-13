@@ -1,8 +1,9 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ClearCounter : MonoBehaviour
+public class ClearCounter : MonoBehaviour, IKitchenObjectParent
 {
     [SerializeField] private KitchenObjectsSO kitchenObjectsSO;
     [SerializeField] private Transform counterTopPoint;
@@ -16,23 +17,23 @@ public class ClearCounter : MonoBehaviour
     {
         if (kitchenObject != null && Input.GetKeyDown(KeyCode.T) && newParentCounter != null)
         {
-            kitchenObject.SetClearCounter(newParentCounter);
+            kitchenObject.SetkitchenObjectParent(newParentCounter);
 
         }
 
     }
 
-    public void Interact()
+    public void Interact(Player player)
     {
-        if (kitchenObject == null)
+        if (kitchenObject == null) // meaning there is no kitchen object on the counter
         {
             GameObject kitchenObjectTransfor = Instantiate(kitchenObjectsSO.prefab, counterTopPoint);
-            kitchenObjectTransfor.GetComponent<KitchenObject>().SetClearCounter(this);
+            kitchenObjectTransfor.GetComponent<KitchenObject>().SetkitchenObjectParent(this);
         }
 
         else
-        { // if there is already an object on the counter, log on which counter the object is located
-            Debug.Log(kitchenObject.GetClearCounter());
+        {   // if there is already an object on the counter, give it to player's hand
+            kitchenObject.SetkitchenObjectParent(player);
         }
     }
 
